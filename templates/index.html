@@ -1,0 +1,110 @@
+{%block title %}Tayara - Automated Poster{%endblock%}
+{% load static %}
+{% block body %}
+    
+    {% if not request.user.is_authenticated %}
+    <div class="main-content">
+        <div class="page-header d-lg-flex d-block">
+            <div class="page-leftheader">
+                <h4 class="page-title">You need to login first</h4>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if AdsToPost|length > 0 %}
+    <div class="main-content">
+        <div class="page-header d-lg-flex d-block">
+            <div class="page-leftheader">
+                <h4 class="page-title">Products</h4>
+            </div>
+        </div>
+        
+        {% for Ad in AdsToPost %}
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="row no-gutter">
+                    <div class="col-xl-6 border-end">
+                        <div class="row product-slider">
+                            <div class="product-carousel pt-5 pb-5">
+                                <div id="carousel" class="carousel slide" data-bs-ride="false">
+                                    <div class="carousel-inner">
+                                        {% for image in Ad.images.all %}
+                                            <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
+                                                <img src="{{ image.image.url }}" alt="img" class="img-fluid mx-auto d-block">
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-slider">
+                                <div id="thumbcarousel" class="carousel slide" data-bs-interval="false">
+                                    <div class="carousel-inner">
+                                        <ul class="carousel-item active">
+
+                                            {% for image in Ad.images.all %}
+                                            <li data-bs-target="#carousel" data-bs-slide-to="{{ forloop.counter }}" class="thumb active my-2">
+                                                <img src="{{ image.image.url }}" alt="img">
+                                            </li>
+                                            {% endfor %}
+                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card-body">
+                            <h4 class="product-title">{{ Ad.titre }}</h4>
+                            <div class="rating mb-3">
+                                <a href="#" class="me-2 mt-1">
+                                    <span class="badge badge-light">{{ Ad.get_gouvernement_display }}</span>
+                                </a>
+                                
+                                <a href="#" class="me-2 mt-1">
+                                    <span class="badge badge-light">{{ Ad.get_delegation_display }}</span>
+                                </a>
+                            </div>
+                            
+                            <h6 class="price">Current Price: 
+                                <span class="h3 ms-2">
+                                    <span style="color: red;">
+                                        {{ Ad.prix }}
+                                    </span>
+                                    TND 
+                                </span>
+                            </h6>
+
+                            <a href="#" class="me-2 mt-1">
+                                <span class="badge badge-light">{{ Ad.get_categorie_display }}</span>
+                            </a>
+
+                            <a href="#" class="me-2 mt-1">
+                                <span class="badge badge-light">{{ Ad.get_sousCategorie_display }}</span>
+                            </a>
+
+                            <div class="">
+                                <label class="form-label">Description:</label>
+                                <p>{{ Ad.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="d-lg-flex justify-content-center">
+        {% if AdsToPost|length < 0 %}
+            <h1 class="lead">There are no Ads to post</h1>
+        {% endif %}
+
+        {% if AdsToPost|length > 0 %}
+        <a href="{% url 'runscript' %}" class="add-to-cart btn btn-danger">Run Script</a>
+        {% endif %}
+    </div>
+    
+{%endblock%}
