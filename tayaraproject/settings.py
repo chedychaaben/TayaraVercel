@@ -1,11 +1,10 @@
 from pathlib import Path
 import os
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-prod = False
 
+prod = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -13,7 +12,8 @@ prod = False
 SECRET_KEY = 'django-insecure-$rb5p=hyb9(kln#mf=&c0xt9ok-h_ux(n!5xt9bi$7ji&p4jad'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = not prod
 
 ALLOWED_HOSTS = ['*', '.vercel.app', '.now.sh']
 
@@ -28,8 +28,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    #local apps
-    'apps.tayara.apps.TayaraConfig'
+    # Custom user model app
+    'apps.users.apps.UsersConfig',
+
+    # local apps
+    'apps.tayara.apps.TayaraConfig',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +120,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
+AUTH_USER_MODEL = 'users.Account'
+
+LOGIN_REDIRECT_URL = '../'
+LOGIN_URL = '../auth/login'
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -130,7 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/templates/'
-STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (

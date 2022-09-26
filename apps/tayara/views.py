@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
+from django.contrib.auth.decorators import login_required
 #
 import time, requests, json
 
 from .models import Annonce, AnnonceCreateProcess, AnnonceDeleteProcess, Task
+from apps.users.models import Account as User
 
-
+@login_required
 def createAnnonce(request,annonceId):
     try:
         annonce = Annonce.objects.get(pk=int(annonceId))
@@ -41,7 +43,7 @@ def createAnnonce(request,annonceId):
     else:
         return HttpResponse("NOT OK")
 
-
+@login_required
 def deleteAnnonce(request,annonceToken):
     AWS_DELETE_URL = "https://ehwaetp5cnelm2nsti4d5d4zty0zedit.lambda-url.eu-west-1.on.aws/"
     p = AnnonceDeleteProcess.objects.create()
@@ -76,12 +78,12 @@ def deleteAnnonce(request,annonceToken):
 
 
 
-
+@login_required
 def triggerAllTasks(request):
     return HttpResponse('Finished')
     
 
-
+@login_required
 def homepage(request):
     context = {}
     return render(request, 'index.html', context=context)

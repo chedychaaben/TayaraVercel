@@ -4,12 +4,13 @@ from django.conf.urls.static import static
 #static files and media files importation
 
 from django.contrib import admin
-from django.urls import path
-import apps.tayara.views as tayara 
+from django.urls import path, include
+import apps.tayara.views as tayara
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', tayara.homepage,name='homepage'),
+    path('auth/', include("apps.users.urls")),
     path('triggerAllTasks/', tayara.triggerAllTasks, name='triggerAllTasks'),
     path('createAnnonce/<str:annonceId>/', tayara.createAnnonce, name='createAnnonce'),
     path('deleteAnnonce/<str:annonceToken>/', tayara.deleteAnnonce, name='deleteAnnonce')
