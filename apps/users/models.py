@@ -52,6 +52,11 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    def get_fullname(self):
+        if self.first_name !="" and self.last_name !="":
+            return self.last_name + " " + self.first_name 
+        return self.email
+
 '''
     #Save The image at 400 px
     def save(self, ** kwargs): # the save method is already exist we r just modifing it

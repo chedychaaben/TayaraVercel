@@ -1,110 +1,269 @@
-{%block title %}Tayara - Automated Poster{%endblock%}
-{% load static %}
-{% block body %}
-    
-    {% if not request.user.is_authenticated %}
-    <div class="main-content">
-        <div class="page-header d-lg-flex d-block">
-            <div class="page-leftheader">
-                <h4 class="page-title">You need to login first</h4>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+{% extends "base.html" %}
+{% block title %}Tayara - Automated Poster{%endblock%}
+{% block main %}  <main id="main" class="main">
 
-    {% if AdsToPost|length > 0 %}
-    <div class="main-content">
-        <div class="page-header d-lg-flex d-block">
-            <div class="page-leftheader">
-                <h4 class="page-title">Products</h4>
-            </div>
-        </div>
-        
-        {% for Ad in AdsToPost %}
-        <div class="card">
-            <div class="card-body p-0">
-                <div class="row no-gutter">
-                    <div class="col-xl-6 border-end">
-                        <div class="row product-slider">
-                            <div class="product-carousel pt-5 pb-5">
-                                <div id="carousel" class="carousel slide" data-bs-ride="false">
-                                    <div class="carousel-inner">
-                                        {% for image in Ad.images.all %}
-                                            <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}">
-                                                <img src="{{ image.image.url }}" alt="img" class="img-fluid mx-auto d-block">
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="carousel-slider">
-                                <div id="thumbcarousel" class="carousel slide" data-bs-interval="false">
-                                    <div class="carousel-inner">
-                                        <ul class="carousel-item active">
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
 
-                                            {% for image in Ad.images.all %}
-                                            <li data-bs-target="#carousel" data-bs-slide-to="{{ forloop.counter }}" class="thumb active my-2">
-                                                <img src="{{ image.image.url }}" alt="img">
-                                            </li>
-                                            {% endfor %}
-                                            
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-6">
-                        <div class="card-body">
-                            <h4 class="product-title">{{ Ad.titre }}</h4>
-                            <div class="rating mb-3">
-                                <a href="#" class="me-2 mt-1">
-                                    <span class="badge badge-light">{{ Ad.get_gouvernement_display }}</span>
-                                </a>
-                                
-                                <a href="#" class="me-2 mt-1">
-                                    <span class="badge badge-light">{{ Ad.get_delegation_display }}</span>
-                                </a>
-                            </div>
-                            
-                            <h6 class="price">Current Price: 
-                                <span class="h3 ms-2">
-                                    <span style="color: red;">
-                                        {{ Ad.prix }}
-                                    </span>
-                                    TND 
-                                </span>
-                            </h6>
+    <section class="section dashboard">
+      <div class="row">
 
-                            <a href="#" class="me-2 mt-1">
-                                <span class="badge badge-light">{{ Ad.get_categorie_display }}</span>
-                            </a>
+        <!-- columns -->
+        <div class="col-lg-12">
+          <div class="row">
 
-                            <a href="#" class="me-2 mt-1">
-                                <span class="badge badge-light">{{ Ad.get_sousCategorie_display }}</span>
-                            </a>
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
 
-                            <div class="">
-                                <label class="form-label">Description:</label>
-                                <p>{{ Ad.description }}</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
                 </div>
-            </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Sales <span>| Today</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-cart"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>145</h6>
+                      <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Revenue <span>| This Month</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>$3,264</h6>
+                      <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+            <!-- Customers Card -->
+            <div class="col-xxl-4 col-xl-12">
+
+              <div class="card info-card customers-card">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Customers <span>| This Year</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>1244</h6>
+                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Customers Card -->
+
+            <!-- Recent Sales -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Actif processes <span>| Tous</span></h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"><a href="#">#2457</a></th>
+                        <td>Brandon Jacob</td>
+                        <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                        <td>$64</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2147</a></th>
+                        <td>Bridie Kessler</td>
+                        <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
+                        <td>$47</td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2049</a></th>
+                        <td>Ashleigh Langosh</td>
+                        <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
+                        <td>$147</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2644</a></th>
+                        <td>Angus Grady</td>
+                        <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
+                        <td>$67</td>
+                        <td><span class="badge bg-danger">Rejected</span></td>
+                      </tr>
+                      <tr>
+                        <th scope="row"><a href="#">#2644</a></th>
+                        <td>Raheem Lehner</td>
+                        <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
+                        <td>$165</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Recent Sales -->
+
+            <!-- Les annonces -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Les annonces <span>| Tous</span></h5>
+
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Annonce</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Nombre de postés</th>
+                        <th scope="col">Nombre de supprimé</th>
+                        <th scope="col">Dernier Tayara Lien</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for Annonce in Annonces %}
+                      <tr>
+                        <th scope="row">
+                            {% for image in Annonce.images.all%}
+                            {% if forloop.first %} 
+                            <a href="#">
+                              <img src="{{image.image.url}}.png" srcset="{{image.image.url}}.png"  alt="{{image}}" />
+                            </a>
+                            {%endif%}
+                            {%endfor%}
+                        </th>
+                        <td><a href="#" class="text-primary fw-bold">{{Annonce.titre}}</a></td>
+                        <td>{{Annonce.prix}} TND</td>
+                        <td class="fw-bold">10</td>
+                        <td class="fw-bold">9</td>
+                        <td>Voir on tayara</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+
+          </div>
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+        <!-- End columns -->
 
-    <div class="d-lg-flex justify-content-center">
-        {% if AdsToPost|length < 0 %}
-            <h1 class="lead">There are no Ads to post</h1>
-        {% endif %}
+      </div>
+    </section>
 
-        {% if AdsToPost|length > 0 %}
-        <a href="{% url 'runscript' %}" class="add-to-cart btn btn-danger">Run Script</a>
-        {% endif %}
-    </div>
-    
+  </main><!-- End #main -->
 {%endblock%}

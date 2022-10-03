@@ -85,5 +85,9 @@ def triggerAllTasks(request):
 
 @login_required
 def homepage(request):
-    context = {}
+    
+    context = {
+                "Annonces":Annonce.objects.all(),
+                
+            }
     return render(request, 'index.html', context=context)
