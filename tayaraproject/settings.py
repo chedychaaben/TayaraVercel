@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # REST API
+    'rest_framework',
     # Custom user model app
     'apps.users.apps.UsersConfig',
 

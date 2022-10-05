@@ -10,6 +10,7 @@ import apps.tayara.views as tayara
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', tayara.homepage,name='homepage'),
+    path('api/', include("apps.api.urls")),
     path('auth/', include("apps.users.urls")),
     path('triggerAllTasks/', tayara.triggerAllTasks, name='triggerAllTasks'),
     path('createAnnonce/<str:annonceId>/', tayara.createAnnonce, name='createAnnonce'),
