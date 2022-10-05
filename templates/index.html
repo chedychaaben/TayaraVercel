@@ -44,39 +44,37 @@
                       <tr>
                         <!--<th scope="col">Image</th>-->
                         <th scope="col">Annonce</th>
-                        <th scope="col">Nombre de postés</th>
-                        <th scope="col">Nombre de supprimé</th>
-                        <th scope="col">Dernier Tayara Lien</th>
-                        <th scope="col">Post</th>
-                        <th scope="col">Delete</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for Annonce in Annonces %}
                       <tr>
-                        <!--
-                        <th scope="row">
-                            {% for image in Annonce.images.all%}
-                            {% if forloop.first %} 
-                            <a href="#">
-                              <img src="{{image.image.url}}.png" srcset="{{image.image.url}}.png"  alt="{{image}}" />
-                            </a>
-                            {%endif%}
-                            {%endfor%}
-                        </th>
-                        -->
+
                         <td><a href="#" class="text-primary fw-bold">{{Annonce.titre}}</a></td>
-                        <td class="fw-bold">10</td>
-                        <td class="fw-bold">9</td>
-                        <td>Voir on tayara</td>
-                        <td>
+                        
+                        <td class="fw-bold">
+                          Posted : {{Annonce.times_posted}},Deleted : {{Annonce.times_deleted}}
+                        </td>
+
+                        <td scope="fw-bold">
+                          {% if not Annonce.is_online %}
                           <a href="{% url 'createAnnonce' Annonce.id %}">
                             Creé nouveau
                           </a>
-                        <td>
+                          {% endif %}
+                          {% if Annonce.is_online %}
                           <a href="{% url 'deleteAnnonce' Annonce.last_created_token %}">
                             Supprimer
                           </a>
+                           OR 
+                          <a href="https://www.tayara.tn/fr/item/{{Annonce.last_created_token}}/">
+                            Voir on Tayara
+                          </a>
+                          {% endif %}
+                        </td>
+            
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -95,4 +93,5 @@
     </section>
 
   </main><!-- End #main -->
+
 {%endblock%}

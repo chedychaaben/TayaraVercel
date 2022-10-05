@@ -38,6 +38,7 @@ def createAnnonce(request,annonceId):
         p.save()
         # save this article token to the annonce last one
         annonce.last_created_token = this_lifeCycle['newCreatedArticleToken']
+        annonce.times_posted = annonce.times_posted + 1
         annonce.save()
         return HttpResponse("OK")
     else:
@@ -49,6 +50,7 @@ def deleteAnnonce(request,annonceToken):
     p = AnnonceDeleteProcess.objects.create()
     p.annonceToken = annonceToken
     p.save()
+
     r = requests.get(AWS_DELETE_URL, headers={"annonceToken": str(annonceToken)})
     if r.status_code == 200:
         this_lifeCycle = json.loads(r.text)
@@ -62,6 +64,13 @@ def deleteAnnonce(request,annonceToken):
         p.deleteAnnonceTimeInSeconds    = this_lifeCycle['deleteAnnonceTimeInSeconds']
         p.processCompleted = True
         p.save()
+
+        # Find the Annonce that has annonceToken exactly like this one and append one to it
+        Annonces_with_this_token = Annonce.objects.filter(last_created_token=annonceToken)
+        for A in Annonces_with_this_token:
+            A.times_deleted = A.times_deleted + 1
+            A.save()
+
         return HttpResponse("OK")
     else:
         return HttpResponse("NOT OK")

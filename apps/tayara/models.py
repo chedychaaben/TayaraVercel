@@ -102,8 +102,10 @@ class Annonce(models.Model):
     
     images                  = models.ManyToManyField('AnnonceImage')
     principalPhoneNumber    = models.BooleanField(default=True)
-    secondaryPhoneNumber    = models.IntegerField(default=True)
+    secondaryPhoneNumber    = models.IntegerField(default=0)
     is_actif                = models.BooleanField(default=True)
+    times_posted            = models.IntegerField(default=0)
+    times_deleted           = models.IntegerField(default=0)
 
     creation_date           = models.DateTimeField(auto_now_add = True, auto_now = False, editable=False)
     last_created_token      = models.CharField(max_length=128, null=False)
@@ -131,6 +133,11 @@ class Annonce(models.Model):
 
     def get_old_token(self):
         return self.last_created_token
+
+    def is_online(self):
+        if self.times_posted > self.times_deleted:
+            return True
+        return False
 
 
 class AnnonceImage(models.Model):
