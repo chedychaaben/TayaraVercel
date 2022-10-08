@@ -5,8 +5,7 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-prod = True
-serve_react = True
+prod = False
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -103,7 +102,7 @@ ROOT_URLCONF = 'tayaraproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'react-build' )], # templates or react-build
+        'DIRS': [os.path.join(BASE_DIR,'react-build' )],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -191,18 +190,12 @@ USE_TZ = True
 
 
 # Extra places for collectstatic to find static files.
-if serve_react:
-    STATIC_URL = '/static/'
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR,'react-build/static'),
-    )
-else:
-    STATIC_URL = '/templates/'
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR,'templates'),
-    )
-
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR,'react-build'),
+)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
