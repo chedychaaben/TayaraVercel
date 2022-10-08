@@ -5,7 +5,7 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-prod = False
+prod = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -16,10 +16,7 @@ SECRET_KEY = 'django-insecure-$rb5p=hyb9(kln#mf=&c0xt9ok-h_ux(n!5xt9bi$7ji&p4jad
 
 DEBUG = not prod
 
-if prod:
-    ALLOWED_HOSTS = ['tayara.ml', '.vercel.app', '.now.sh']
-else:
-    ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -102,7 +99,7 @@ ROOT_URLCONF = 'tayaraproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'react-build' )],
+        'DIRS': [os.path.join(BASE_DIR, 'react-build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -194,7 +191,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR,'react-build'),
+    os.path.join(BASE_DIR,'react-build/static'),
 )
 
 MEDIA_URL = '/media/'
