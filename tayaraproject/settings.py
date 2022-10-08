@@ -187,12 +187,14 @@ USE_TZ = True
 
 
 # Extra places for collectstatic to find static files.
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
+STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
+STATIC_URL = STATIC_HOST + '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR,'react-build/static'),
 )
+
+STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'
@@ -216,8 +218,5 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage' #this
 
 # CORS For React
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
 ]
