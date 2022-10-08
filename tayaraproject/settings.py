@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 prod = False
+serve_react = True
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -102,7 +103,7 @@ ROOT_URLCONF = 'tayaraproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR,'react-build' )], # templates or react-build
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -188,13 +189,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/templates/'
-STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
 
 # Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+if serve_react:
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR,'react-build/static'),
+    )
+else:
+    STATIC_URL = '/templates/'
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR,'templates'),
+    )
+
+STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media/'

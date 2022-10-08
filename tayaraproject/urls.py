@@ -6,10 +6,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 import apps.tayara.views as tayara
+from django.views.generic import TemplateView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', tayara.homepage,name='homepage'),
+    path('', TemplateView.as_view(template_name='index.html'),name='homepage'),
+    #path('', tayara.homepage,name='homepage'),
     path('api/', include("apps.api.urls")),
     path('auth/', include("apps.users.urls")),
     path('triggerAllTasks/', tayara.triggerAllTasks, name='triggerAllTasks'),
