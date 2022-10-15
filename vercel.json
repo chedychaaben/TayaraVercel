@@ -13,5 +13,15 @@
           "distDir": "staticfiles_build_vercel"
         }
       }
+    ],
+    "routes": [
+      {
+        "src": "/static/(.*)",
+        "dest": "/react-build/static/$1"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "tayaraproject/wsgi.py"
+      }
     ]
   }
