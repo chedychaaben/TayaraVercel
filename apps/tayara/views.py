@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+
 #
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 import time, requests, json, httpx, re
 from .utils import base64_to_bytes, base64_to_hex, hex_to_base64, hex_to_bytes, extract_jwt, clean_spaces_from_hex_code
 from .utils import get_www_headers, get_auth_headers
@@ -73,21 +76,24 @@ def deleteAnnonce(request): #main_id, jwt
 
 
 
-@csrf_exempt
-def login_and_getJWT(request):
+@permission_classes([IsAuthenticated]) # Protected with bearer token ;)
+@api_view(['POST'])
+def loginOnTayara(request):
     if request.method == 'POST':
-        kifech naaref el user mel api call ? bel authorization token!!!!!!
+        #kifech naaref el user mel api call ? bel authorization token!!!!!!
         # Exemple f"\u0000\u0000\u0000\u0000\u0014\n\b{phonenumber}\u0012\b{phonenumber}"
         dataInBytesForLogin = request.POST['dataInBytesForLogin']
+        dataInBytesForLogin = "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
         url = "https://authentication.tayara.tn/Auth.auth/login"
         r = httpx.post(url, headers=get_auth_headers(), data=dataInBytesForLogin)
+        print(dataInBytesForLogin)
+        if r.text :
+            jwt = extract_jwt(r.text)
+            if len(jwt) == 773:
 
-        jwt = extract_jwt(r.text)
-
-        if len(jwt) == 773:
-            print('login was ok')
-            #return True, jwt
-            return HttpResponse(f"OK {jwt}")
+                print('login was ok')
+                #return True, jwt
+                return HttpResponse(f"OK {jwt}")
         else:
             print('login was not ok')
             #return False, ''

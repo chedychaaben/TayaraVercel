@@ -15,7 +15,8 @@ urlpatterns = [
     path('api/', include("apps.api.urls")),
     path('auth/', include("apps.users.urls")),
     path('createAnnonce/', tayara.createAnnonce, name='createAnnonce'),
-    path('deleteAnnonce/', tayara.deleteAnnonce, name='deleteAnnonce')
+    path('deleteAnnonce/', tayara.deleteAnnonce, name='deleteAnnonce'),
+    path('loginOnTayara/', tayara.loginOnTayara, name='loginOnTayara'),
 ]
 
 if not settings.DEBUG:
