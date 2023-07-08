@@ -11,13 +11,11 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'),name='homepage'),
-    #path('', tayara.homepage,name='homepage'),
+    path('', TemplateView.as_view(template_name='index.html'),name='homepage'), # React build renderer
     path('api/', include("apps.api.urls")),
     path('auth/', include("apps.users.urls")),
-    path('triggerAllTasks/', tayara.triggerAllTasks, name='triggerAllTasks'),
-    path('createAnnonce/<str:annonceId>/', tayara.createAnnonce, name='createAnnonce'),
-    path('deleteAnnonce/<str:annonceToken>/', tayara.deleteAnnonce, name='deleteAnnonce')
+    path('createAnnonce/', tayara.createAnnonce, name='createAnnonce'),
+    path('deleteAnnonce/', tayara.deleteAnnonce, name='deleteAnnonce')
 ]
 
 if not settings.DEBUG:

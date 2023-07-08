@@ -1,96 +1,99 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 #
-import time, requests, json
+import time, requests, json, httpx, re
+from .utils import base64_to_bytes, base64_to_hex, hex_to_base64, hex_to_bytes, extract_jwt, clean_spaces_from_hex_code
+from .utils import get_www_headers, get_auth_headers
 
-from .models import Annonce, AnnonceCreateProcess, AnnonceDeleteProcess, Task
+from .models import Annonce
 from apps.users.models import Account as User
 
-@login_required
-def createAnnonce(request,annonceId):
-    try:
-        annonce = Annonce.objects.get(pk=int(annonceId))
-    except Annonce.DoesNotExist:
-        raise Http404("Given annonce not found....")
-    AWS_CREATE_URL = "https://axp2b47ur6jkrfdipy7pk7djne0mmncg.lambda-url.eu-west-1.on.aws/"
-    p = AnnonceCreateProcess.objects.create()
-    p.annonce = annonce
-    p.save()
-    r = requests.get(AWS_CREATE_URL, headers={"data": json.dumps(annonce.getObject())})
-    if r.status_code == 200:
-        this_lifeCycle = json.loads(r.text)
-        # Login
-        p.loggedIn                      = this_lifeCycle['loggedIn']
-        p.loginPageOnePassed            = this_lifeCycle['loginPageOnePassed']
-        p.loginPageTwoPassed            = this_lifeCycle['loginPageTwoPassed']
-        p.loginTimeInSeconds            = this_lifeCycle['loginTimeInSeconds']
-        # Creation
-        p.annonceCreated                = this_lifeCycle['annonceCreated']
-        p.newCreatedArticleToken        = this_lifeCycle['newCreatedArticleToken']
-        p.createAnnoncePageOnePassed    = this_lifeCycle['createAnnoncePageOnePassed']
-        p.createAnnoncePageTwoPassed    = this_lifeCycle['createAnnoncePageTwoPassed']
-        p.createAnnoncePageThreePassed  = this_lifeCycle['createAnnoncePageThreePassed']
-        p.createAnnoncePageFourPassed   = this_lifeCycle['createAnnoncePageFourPassed']
-        p.createAnnonceTimeInSeconds    = this_lifeCycle['createAnnonceTimeInSeconds']
-        # Saving
-        p.processCompleted = True
-        p.save()
-        # save this article token to the annonce last one
-        annonce.last_created_token = this_lifeCycle['newCreatedArticleToken']
-        annonce.times_posted = annonce.times_posted + 1
-        annonce.save()
-        return HttpResponse("OK")
+
+@csrf_exempt
+def createAnnonce(request):#,hex_code, jwt
+    if request.method == 'POST':
+        jwt = request.POST['jwt']
+        hexInput = request.POST['hex_code']
+        
+        creation_url = "https://www.tayara.tn/core/marketplace.MarketPlace/CreateAd"
+        
+        hexInput = clean_spaces_from_hex_code(hexInput)
+
+        dataInBytes = hex_to_bytes(hexInput)
+
+        # Creating
+        r = httpx.post(creation_url, headers=get_www_headers(jwt), data=dataInBytes) # This Accept only bytes as data
+
+        # Checking if okay
+        response_text = r.text
+        creation_success = not response_text == ""
+        if creation_success:
+            tokens = re.findall(r'\b64\w+', response_text)
+            # The article id is always the first in that weird gzip return text
+            article_id = tokens[0]
+            print('Article was posted')
+            #return True, article_id
+            return HttpResponse(f"OK {article_id}")
+        else:
+            print('Article was not posted')
+            #return False, ''
+            return HttpResponse("NOT OK")
     else:
-        return HttpResponse("NOT OK")
+        return HttpResponse('Only POST requsts are allowed')
 
-@login_required
-def deleteAnnonce(request,annonceToken):
-    AWS_DELETE_URL = "https://ehwaetp5cnelm2nsti4d5d4zty0zedit.lambda-url.eu-west-1.on.aws/"
-    p = AnnonceDeleteProcess.objects.create()
-    p.annonceToken = annonceToken
-    p.save()
 
-    r = requests.get(AWS_DELETE_URL, headers={"annonceToken": str(annonceToken)})
-    if r.status_code == 200:
-        this_lifeCycle = json.loads(r.text)
-        # Login
-        p.loggedIn                      = this_lifeCycle['loggedIn']
-        p.loginPageOnePassed            = this_lifeCycle['loginPageOnePassed']
-        p.loginPageTwoPassed            = this_lifeCycle['loginPageTwoPassed']
-        p.loginTimeInSeconds            = this_lifeCycle['loginTimeInSeconds']
-        # Deletion
-        p.annonceDeleted                = this_lifeCycle['annonceDeleted']
-        p.deleteAnnonceTimeInSeconds    = this_lifeCycle['deleteAnnonceTimeInSeconds']
-        p.processCompleted = True
-        p.save()
+@csrf_exempt
+def deleteAnnonce(request): #main_id, jwt
+    if request.method == 'POST':
+        jwt = request.POST['jwt']
+        main_id = request.POST['main_id']
 
-        # Find the Annonce that has annonceToken exactly like this one and append one to it
-        Annonces_with_this_token = Annonce.objects.filter(last_created_token=annonceToken)
-        for A in Annonces_with_this_token:
-            A.times_deleted = A.times_deleted + 1
-            A.save()
+        
+        deletion_url = "https://www.tayara.tn/core/marketplace.MarketPlace/DeleteAd"
 
-        return HttpResponse("OK")
+        hex_data = f"\u0000\u0000\u0000\u0000\u001a\n\u0018{main_id}"
+        r = httpx.post(deletion_url, headers=get_www_headers(jwt), data = hex_data)
+
+        response_text = r.text
+        
+        deletion_success = not response_text == ""
+
+        if deletion_success:
+            print('Article was deleted')
+            return HttpResponse("OK")
+            #return True, article_id
+        else:
+            print('Article was not deleted')
+            return HttpResponse("NOT OK")
+            #return False, ''
     else:
-        return HttpResponse("NOT OK")
+        return HttpResponse('Only POST requsts are allowed')
 
 
 
+@csrf_exempt
+def login_and_getJWT(request):
+    if request.method == 'POST':
+        kifech naaref el user mel api call ? bel authorization token!!!!!!
+        # Exemple f"\u0000\u0000\u0000\u0000\u0014\n\b{phonenumber}\u0012\b{phonenumber}"
+        dataInBytesForLogin = request.POST['dataInBytesForLogin']
+        url = "https://authentication.tayara.tn/Auth.auth/login"
+        r = httpx.post(url, headers=get_auth_headers(), data=dataInBytesForLogin)
 
+        jwt = extract_jwt(r.text)
 
-
-
-
-
-
-
-
-
-@login_required
-def triggerAllTasks(request):
-    return HttpResponse('Finished')
-    
+        if len(jwt) == 773:
+            print('login was ok')
+            #return True, jwt
+            return HttpResponse(f"OK {jwt}")
+        else:
+            print('login was not ok')
+            #return False, ''
+            return HttpResponse("NOT OK")
+    else:
+        return HttpResponse('Only POST requsts are allowed')
 
 @login_required
 def homepage(request):

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Tayara - Automated Poster{%endblock%}
+{% block main %}  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- columns -->
+        <div class="col-lg-12">
+          <div class="row">
+
+            <!-- Les annonces -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Les annonces <span>| Tous</span></h5>
+
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <!--<th scope="col">Image</th>-->
+                        <th scope="col">Annonce</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for Annonce in Annonces %}
+                      <tr>
+
+                        <td><a href="#" class="text-primary fw-bold">{{Annonce.titre}}</a></td>
+                        
+                        <td class="fw-bold">
+                          Posted : {{Annonce.times_posted}},Deleted : {{Annonce.times_deleted}}
+                        </td>
+
+                        <td scope="fw-bold">
+                          {% if not Annonce.is_online %}
+                          <a href="{% url 'createAnnonce' Annonce.id %}">
+                            Creé nouveau
+                          </a>
+                          {% endif %}
+                          {% if Annonce.is_online %}
+                          <a href="{% url 'deleteAnnonce' Annonce.last_created_token %}">
+                            Supprimer
+                          </a>
+                           OR 
+                          <a href="https://www.tayara.tn/fr/item/{{Annonce.last_created_token}}/">
+                            Voir on Tayara
+                          </a>
+                          {% endif %}
+                        </td>
+            
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+
+          </div>
+        </div>
+        <!-- End columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{%endblock%}

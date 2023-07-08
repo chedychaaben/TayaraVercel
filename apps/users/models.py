@@ -30,6 +30,10 @@ class Account(AbstractBaseUser):
     first_name 				= models.CharField(max_length=30)
     last_name 				= models.CharField(max_length=30)
     email 					= models.EmailField(verbose_name="email", max_length=60, unique=True)
+    login_bytes_code        = models.CharField(max_length=128, null=True, blank=True)
+    jwt                     = models.CharField(max_length=1024, null=True, blank=True)
+    number_of_ads           = models.IntegerField(default=0, null=True, blank=True)
+    time_in_minutes         = models.IntegerField(default=0, null=True, blank=True)
     date_joined				= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login				= models.DateTimeField(verbose_name='last login', auto_now=True)
     is_admin				= models.BooleanField(default=False)
@@ -57,6 +61,11 @@ class Account(AbstractBaseUser):
             return self.last_name + " " + self.first_name 
         return self.email
 
+    def get_jwt(self):
+        return self.jwt
+    
+    def bytes_code_for_login(self):
+        return self.bytes_code_for_login
 '''
     #Save The image at 400 px
     def save(self, ** kwargs): # the save method is already exist we r just modifing it
