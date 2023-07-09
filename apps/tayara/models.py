@@ -12,7 +12,7 @@ class Annonce(models.Model):
     images                  = models.ManyToManyField('AnnonceImage', blank=True)
     is_actif                = models.BooleanField(default=True)
     creation_date           = models.DateTimeField(auto_now_add = True, auto_now = False, editable=False)
-    owner                   = models.OneToOneField(Account, related_name='Annonce_user', null=True, on_delete=models.SET_NULL)
+    user                    = models.ForeignKey(Account, related_name='Annonce_user', null=True, on_delete=models.SET_NULL)
     
     class Meta:
         ordering = ['-creation_date']
@@ -73,9 +73,9 @@ class Event(models.Model):
     related_annonce_id = models.CharField(max_length=24, null=True, blank=True)
     jwt                = models.CharField(max_length=1024, null=True, blank=True)
     success            = models.BooleanField(default=False)
-    was_manual         = models.BooleanField(default=False)
+    was_manual         = models.BooleanField(default=True)
     creation_date      = models.DateTimeField(auto_now_add = True, auto_now = False, editable=False)
-    owner              = models.OneToOneField(Account, related_name='Event_user', null=True, on_delete=models.SET_NULL)
+    user               = models.ForeignKey(Account, related_name='Event_user', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.nature

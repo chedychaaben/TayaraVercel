@@ -10,11 +10,13 @@ import time, requests, json, httpx, re
 from .utils import base64_to_bytes, base64_to_hex, hex_to_base64, hex_to_bytes, extract_jwt, clean_spaces_from_hex_code
 from .utils import get_www_headers, get_auth_headers
 
-from .models import Annonce
+from .models import Annonce, Event
 from apps.users.models import Account as User
 
 
-@csrf_exempt
+
+#@permission_classes([IsAuthenticated])
+#@api_view(['GET'])
 def createAnnonce(request):#,hex_code, jwt
     if request.method == 'POST':
         jwt = request.POST['jwt']
@@ -47,20 +49,22 @@ def createAnnonce(request):#,hex_code, jwt
         return HttpResponse('Only POST requsts are allowed')
 
 
-@csrf_exempt
-def deleteAnnonce(request): #main_id, jwt
-    if request.method == 'POST':
-        jwt = request.POST['jwt']
+#@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def deleteAnnonce(request): #main_id
+    try:
+        # Creating Event
+        event = Event.objects.create(nature="DELETE")
+        jwt = JIB MELLLLLLLLL REQUEST USER
         main_id = request.POST['main_id']
 
-        
         deletion_url = "https://www.tayara.tn/core/marketplace.MarketPlace/DeleteAd"
 
         hex_data = f"\u0000\u0000\u0000\u0000\u001a\n\u0018{main_id}"
         r = httpx.post(deletion_url, headers=get_www_headers(jwt), data = hex_data)
 
         response_text = r.text
-        
+
         deletion_success = not response_text == ""
 
         if deletion_success:
@@ -71,36 +75,37 @@ def deleteAnnonce(request): #main_id, jwt
             print('Article was not deleted')
             return HttpResponse("NOT OK")
             #return False, ''
-    else:
-        return HttpResponse('Only POST requsts are allowed')
+        return HttpResponse(f"Event ID : {event.id}")
+    except:
+        return HttpResponse("Error PLease change this to not 200")
 
 
 
-@permission_classes([IsAuthenticated]) # Protected with bearer token ;)
-@api_view(['POST'])
+#@permission_classes([IsAuthenticated])
+#@api_view(['GET'])
 def loginOnTayara(request):
-    if request.method == 'POST':
-        #kifech naaref el user mel api call ? bel authorization token!!!!!!
-        # Exemple f"\u0000\u0000\u0000\u0000\u0014\n\b{phonenumber}\u0012\b{phonenumber}"
-        dataInBytesForLogin = request.POST['dataInBytesForLogin']
-        dataInBytesForLogin = "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
-        url = "https://authentication.tayara.tn/Auth.auth/login"
-        r = httpx.post(url, headers=get_auth_headers(), data=dataInBytesForLogin)
-        print(dataInBytesForLogin)
-        if r.text :
-            jwt = extract_jwt(r.text)
-            if len(jwt) == 773:
-
-                print('login was ok')
-                #return True, jwt
-                return HttpResponse(f"OK {jwt}")
-        else:
-            print('login was not ok')
-            #return False, ''
-            return HttpResponse("NOT OK")
-    else:
-        return HttpResponse('Only POST requsts are allowed')
-
+    try:
+        # Creating Event
+        event = Event.objects.create(nature="LOGIN")
+        # Example "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
+        user = User.objects.first() #DELETEEEEEEEEEEEEEEEEEEEEEEEE
+        #user = request.user
+        event.user = user
+        if user.login_bytes_code:
+            dataInBytesForLogin = user.login_bytes_code# IDK WHY DOSENT WORKKKKK
+            dataInBytesForLogin = "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
+            url = "https://authentication.tayara.tn/Auth.auth/login"
+            r = httpx.post(url, headers=get_auth_headers(), data=dataInBytesForLogin)
+            print(dataInBytesForLogin)
+            if r.text:
+                jwt = extract_jwt(r.text)
+                if len(jwt) == 773:
+                    event.jwt = jwt
+                    event.success = True
+        event.save()
+        return HttpResponse(f"Event ID : {event.id}")
+    except:
+        return HttpResponse("Error PLease change this to not 200")
 @login_required
 def homepage(request):
     
