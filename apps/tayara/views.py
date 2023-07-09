@@ -14,14 +14,22 @@ from .models import Annonce, Event
 from apps.users.models import Account as User
 
 
+from rest_framework import status
 
 #@permission_classes([IsAuthenticated])
-#@api_view(['GET'])
-def createAnnonce(request):#,hex_code, jwt
-    if request.method == 'POST':
-        jwt = request.POST['jwt']
-        hexInput = request.POST['hex_code']
-        
+@api_view(['POST'])
+def createAnnonce(request):#,annonce_id
+    try:
+        event = Event.objects.create(nature="CREATE")
+
+        annonce_id = request.POST['annonce_id']
+        hexInput = Annonce.objects.get(id=annonce_id).hex_code
+
+        user = User.objects.first() #DELETEEEEEEEEEEEEEEEEEEEEEEEE
+        #user = request.user
+        event.user = user
+        jwt = user.jwt
+
         creation_url = "https://www.tayara.tn/core/marketplace.MarketPlace/CreateAd"
         
         hexInput = clean_spaces_from_hex_code(hexInput)
@@ -32,22 +40,17 @@ def createAnnonce(request):#,hex_code, jwt
         r = httpx.post(creation_url, headers=get_www_headers(jwt), data=dataInBytes) # This Accept only bytes as data
 
         # Checking if okay
-        response_text = r.text
-        creation_success = not response_text == ""
-        if creation_success:
-            tokens = re.findall(r'\b64\w+', response_text)
+        if not r.text == "":
+            tokens = re.findall(r'\b64\w+', r.text)
             # The article id is always the first in that weird gzip return text
             article_id = tokens[0]
-            print('Article was posted')
-            #return True, article_id
-            return HttpResponse(f"OK {article_id}")
-        else:
-            print('Article was not posted')
-            #return False, ''
-            return HttpResponse("NOT OK")
-    else:
-        return HttpResponse('Only POST requsts are allowed')
-
+            event.related_annonce_id = article_id
+            event.success = True
+        
+        event.save()
+        return HttpResponse(f"Event ID : {event.id}")
+    except:
+        return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
 
 #@permission_classes([IsAuthenticated])
 @api_view(['POST'])
@@ -55,29 +58,27 @@ def deleteAnnonce(request): #main_id
     try:
         # Creating Event
         event = Event.objects.create(nature="DELETE")
-        jwt = JIB MELLLLLLLLL REQUEST USER
         main_id = request.POST['main_id']
+        
+        user = User.objects.first() #DELETEEEEEEEEEEEEEEEEEEEEEEEE
+        #user = request.user
+        event.user = user
+        jwt = user.jwt
+        event.related_annonce_id = main_id
 
         deletion_url = "https://www.tayara.tn/core/marketplace.MarketPlace/DeleteAd"
 
         hex_data = f"\u0000\u0000\u0000\u0000\u001a\n\u0018{main_id}"
+
         r = httpx.post(deletion_url, headers=get_www_headers(jwt), data = hex_data)
 
-        response_text = r.text
-
-        deletion_success = not response_text == ""
-
-        if deletion_success:
-            print('Article was deleted')
-            return HttpResponse("OK")
-            #return True, article_id
-        else:
-            print('Article was not deleted')
-            return HttpResponse("NOT OK")
-            #return False, ''
+        if not r.text == "":
+            event.success = True
+        
+        event.save()
         return HttpResponse(f"Event ID : {event.id}")
     except:
-        return HttpResponse("Error PLease change this to not 200")
+        return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -105,7 +106,11 @@ def loginOnTayara(request):
         event.save()
         return HttpResponse(f"Event ID : {event.id}")
     except:
-        return HttpResponse("Error PLease change this to not 200")
+        return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 @login_required
 def homepage(request):
     
