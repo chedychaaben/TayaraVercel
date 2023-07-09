@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # local apps
     'apps.tayara.apps.TayaraConfig',
+    'jobs'
 ]
 
 REST_FRAMEWORK = {

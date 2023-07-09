@@ -108,6 +108,8 @@ def loginOnTayara(request):
     except:
         return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
 
+def scheduled_job():
+    print('kk')
 
 
 

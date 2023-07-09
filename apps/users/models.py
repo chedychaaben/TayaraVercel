@@ -34,6 +34,7 @@ class Account(AbstractBaseUser):
     jwt                     = models.CharField(max_length=1024, null=True, blank=True)
     number_of_ads           = models.IntegerField(default=0, null=True, blank=True)
     time_in_minutes         = models.IntegerField(default=0, null=True, blank=True)
+    last_time_triggered		= models.DateTimeField(verbose_name='last time triggered')
     date_joined				= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login				= models.DateTimeField(verbose_name='last login', auto_now=True)
     is_admin				= models.BooleanField(default=False)
