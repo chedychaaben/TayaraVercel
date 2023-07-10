@@ -17,6 +17,7 @@ urlpatterns = [
     path('createAnnonce/', tayara.createAnnonce, name='createAnnonce'),
     path('deleteAnnonce/', tayara.deleteAnnonce, name='deleteAnnonce'),
     path('loginOnTayara/', tayara.loginOnTayara, name='loginOnTayara'),
+    path('job/', tayara.job, name='job'),
 ]
 
 if not settings.DEBUG:
