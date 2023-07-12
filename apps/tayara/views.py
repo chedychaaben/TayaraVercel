@@ -136,7 +136,7 @@ def loginOnTayara(request):
 def jobFN():
     print('job triggered')
     for user in User.objects.all():
-        Annonces = Annonce.objects.filter(user=user)
+        Annonces = Annonce.objects.filter(user=user, is_actif=True)
         time_now = datetime.datetime.now()
         preffered_time = user.time_in_minutes
         last_time_triggered = user.last_time_triggered.replace(tzinfo=None)
