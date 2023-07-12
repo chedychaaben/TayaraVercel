@@ -133,7 +133,8 @@ def loginOnTayara(request):
     else:
         return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
 
-def job(request):
+def jobFN():
+    print('job triggered')
     for user in User.objects.all():
         Annonces = Annonce.objects.filter(user=user)
         time_now = datetime.datetime.now()
@@ -160,8 +161,12 @@ def job(request):
         user.last_time_triggered = datetime.datetime.now()
         user.save()
 
-    return HttpResponse('kk')
+    return True
 
+
+def job(request):
+    if jobFN():
+        return HttpResponse('kk')
 
 
 @login_required

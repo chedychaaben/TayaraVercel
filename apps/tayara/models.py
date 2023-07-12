@@ -73,6 +73,7 @@ class AnnonceOnTayaraNow(models.Model):
     annonce                 = models.ForeignKey(Annonce, related_name='AnnonceOnTayaraNow_user_Annonce', null=True, on_delete=models.SET_NULL)
     user                    = models.ForeignKey(Account, related_name='AnnonceOnTayaraNow_user', null=True, on_delete=models.SET_NULL)
     tayara_annonce_id       = models.CharField(max_length=24, null=True, blank=True)
+    creation_date      = models.DateTimeField(auto_now_add = True, auto_now = False, editable=False)
 
 class Event(models.Model):
     nature  = models.CharField(max_length=10,choices=EventNatureChoices)
