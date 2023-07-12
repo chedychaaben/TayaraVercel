@@ -23,5 +23,13 @@
         "src": "/(.*)",
         "dest": "tayaraproject/wsgi.py"
       }
+    ],
+
+    "crons": [
+      {
+        "path": "/job",
+        "schedule": "*/5 * * * *"
+      }
     ]
   }
+  
