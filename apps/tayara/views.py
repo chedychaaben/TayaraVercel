@@ -144,9 +144,9 @@ def jobFN():
 
         new_Annonces_that_should_be_reposted = []
 
-        if diff_in_minutes > preffered_time:
-            for A in Annonces:
-                new_Annonces_that_should_be_reposted.append(A)
+        #if diff_in_minutes > preffered_time:
+        for A in Annonces:
+            new_Annonces_that_should_be_reposted.append(A)
         
         print(f"Found {len(new_Annonces_that_should_be_reposted)} targets...")
         if len(new_Annonces_that_should_be_reposted) > 0:
