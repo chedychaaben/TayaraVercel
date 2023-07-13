@@ -137,14 +137,15 @@ def jobFN():
     print('job triggered')
     for user in User.objects.all():
         Annonces = Annonce.objects.filter(user=user, is_actif=True)
-        time_now = datetime.datetime.now()
+        time_nowUTC = datetime.datetime.utcnow()
         preffered_time = user.time_in_minutes
-        last_time_triggered = user.last_time_triggered.replace(tzinfo=None)
-        diff_in_minutes = (time_now-last_time_triggered).total_seconds() / 60
+        last_time_triggeredUTC = user.last_time_triggered.replace(tzinfo=None)
+        diff_in_minutes = (time_nowUTC-last_time_triggeredUTC).total_seconds() / 60
 
         new_Annonces_that_should_be_reposted = []
-        for A in Annonces:
-            if diff_in_minutes > preffered_time:
+
+        if diff_in_minutes > preffered_time:
+            for A in Annonces:
                 new_Annonces_that_should_be_reposted.append(A)
         
         print(f"Found {len(new_Annonces_that_should_be_reposted)} targets...")
