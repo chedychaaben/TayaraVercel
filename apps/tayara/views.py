@@ -154,11 +154,16 @@ def jobFN():
             for AOTN in AnnonceOnTayaraNow.objects.filter(user=user):
                 # Delete ALL
                 deleteAnnonceFN(user, AOTN.tayara_annonce_id)
+            '''
             # Create as you wish
             for i in range(user.number_of_ads):
                 A = random.choice(new_Annonces_that_should_be_reposted)
                 createAnnonceFN(user, A.id)
-
+            '''
+            # 1 ad post per Annonce
+            for A in new_Annonces_that_should_be_reposted:
+                createAnnonceFN(user, A.id)
+            
         user.last_time_triggered = datetime.datetime.now()
         user.save()
 
