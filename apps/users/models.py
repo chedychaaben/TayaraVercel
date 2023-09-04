@@ -30,7 +30,7 @@ class Account(AbstractBaseUser):
     first_name 				= models.CharField(max_length=30)
     last_name 				= models.CharField(max_length=30)
     email 					= models.EmailField(verbose_name="email", max_length=60, unique=True)
-    login_bytes_code        = models.CharField(max_length=128, null=True, blank=True)
+    login_hex_code          = models.CharField(max_length=750, null=True, blank=True)
     jwt                     = models.CharField(max_length=1024, null=True, blank=True)
     number_of_ads           = models.IntegerField(default=0, null=True, blank=True)
     time_in_minutes         = models.IntegerField(default=0, null=True, blank=True)
@@ -65,8 +65,13 @@ class Account(AbstractBaseUser):
     def get_jwt(self):
         return self.jwt
     
-    def bytes_code_for_login(self):
-        return self.bytes_code_for_login
+    def save(self, *args,  ** kwargs):
+        # Removing useless spaces
+        while ' ' in self.login_hex_code:
+            self.login_hex_code = self.login_hex_code.replace(' ','')
+        #
+        # Saving
+        super(Account, self).save(*args, **kwargs)
 '''
     #Save The image at 400 px
     def save(self, ** kwargs): # the save method is already exist we r just modifing it

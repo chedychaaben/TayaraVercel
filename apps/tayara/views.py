@@ -107,17 +107,14 @@ def loginOnTayaraFN(user):
     try:
         # Creating Event
         event = Event.objects.create(nature="LOGIN")
-        # Example "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
         event.user = user
-        if user.login_bytes_code:
-            dataInBytesForLogin = user.login_bytes_code# IDK WHY DOSENT WORKKKKK
-            dataInBytesForLogin = "\u0000\u0000\u0000\u0000\u0014\n\b92268675\u0012\b92268675"
+        if user.login_hex_code:
             url = "https://authentication.tayara.tn/Auth.auth/login"
-            r = httpx.post(url, headers=get_auth_headers(), data=dataInBytesForLogin)
-            print(dataInBytesForLogin)
-            if len(extract_jwt(r.text)) == 773:
-                event.jwt = extract_jwt(r.text)
-                event.success = True
+            r = httpx.post(url, headers=get_auth_headers(), data=hex_to_bytes(user.login_hex_code))#data=dataInBytesForLogin)
+            user.jwt = extract_jwt(r.text)
+            event.jwt = extract_jwt(r.text)
+            event.success = True
+        user.save()
         event.save()
         return True
     except:
