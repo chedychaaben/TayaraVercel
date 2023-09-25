@@ -17,6 +17,9 @@ from apps.users.models import Account as User
 from rest_framework import status
 
 
+@login_required
+def homepage(request):
+    return HttpResponse('Hey')
 
 def createAnnonceFN(user, annonce_id):
     try:
@@ -40,11 +43,13 @@ def createAnnonceFN(user, annonce_id):
 
         # Checking if okay
         if not r.text == "":
-            tokens = re.findall(r'\b64\w+', r.text)
+            tokens = re.findall(r'[a-f0-9]{24}', r.text)
             # The article id is always the first in that weird gzip return text
             article_id = tokens[0]
+
             event.related_annonce_id = article_id
             event.success = True
+            A.main_id = article_id
             A.is_onTayaraNow = True
             AOTN = AnnonceOnTayaraNow.objects.create(annonce=A, user=user, tayara_annonce_id=article_id)
         
@@ -65,6 +70,40 @@ def createAnnonce(request):
         return HttpResponse("ERROR",status=status.HTTP_400_BAD_REQUEST)
 
 def deleteAnnonceFN(user, main_id):
+    # Deleting annonce then creating related event
+    
+    # Getting User because it's needed for the request
+    if not user or user.is_anonymous : 
+        print('Request is from anonymous ')
+        user = User.objects.first()
+    jwt = user.jwt
+    # Delete Annonce
+
+    deletion_url = "https://www.tayara.tn/core/marketplace.MarketPlace/DeleteAd"
+
+    hex_data = f"\u0000\u0000\u0000\u0000\u001a\n\u0018{main_id}"
+
+    r = httpx.post(deletion_url, headers=get_www_headers(jwt), data = hex_data)
+    
+    # Event Creation
+    event = Event.objects.create(nature="DELETE")
+    event.user = user
+    event.related_annonce_id = main_id
+
+    if not r.text == "":
+        event.success = True
+        AOTN = AnnonceOnTayaraNow.objects.get(tayara_annonce_id=main_id)
+        AOTN.delete()
+    
+    A = Annonce.objects.get(main_id=main_id)
+    A.is_onTayaraNow = False
+    A.save()
+
+    
+    event.save()
+    return True
+
+"""
     try :
         # Creating Event
         event = Event.objects.create(nature="DELETE")
@@ -77,7 +116,6 @@ def deleteAnnonceFN(user, main_id):
         hex_data = f"\u0000\u0000\u0000\u0000\u001a\n\u0018{main_id}"
 
         r = httpx.post(deletion_url, headers=get_www_headers(jwt), data = hex_data)
-
         if not r.text == "":
             event.success = True
             AOTN = AnnonceOnTayaraNow.objects.get(tayara_annonce_id=main_id)
@@ -91,7 +129,7 @@ def deleteAnnonceFN(user, main_id):
         event.save()
         return True
     except:
-        return False
+        return False"""
 
 
 #@permission_classes([IsAuthenticated])
@@ -170,12 +208,3 @@ def jobFN():
 def job(request):
     if jobFN():
         return HttpResponse('kk')
-
-
-@login_required
-def homepage(request):
-    
-    context = {
-                "Annonces":Annonce.objects.all(),
-            }
-    return render(request, 'index.html', context=context)

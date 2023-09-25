@@ -39,7 +39,6 @@ INSTALLED_APPS = [
 
     # local apps
     'apps.tayara.apps.TayaraConfig',
-    'jobs'
 ]
 
 REST_FRAMEWORK = {
@@ -191,7 +190,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR,'react-build', 'static'),
+    os.path.join(BASE_DIR,'templates', 'assets'),
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR ,'staticfiles_build_vercel')

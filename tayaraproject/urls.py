@@ -6,13 +6,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 import apps.tayara.views as tayara
-from django.views.generic import TemplateView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'),name='homepage'), # React build renderer
-    path('api/', include("apps.api.urls")),
+    path('', tayara.homepage,name='homepage'),
     path('auth/', include("apps.users.urls")),
     path('createAnnonce/', tayara.createAnnonce, name='createAnnonce'),
     path('deleteAnnonce/', tayara.deleteAnnonce, name='deleteAnnonce'),
