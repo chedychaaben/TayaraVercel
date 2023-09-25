@@ -1,8 +1,0 @@
-env/
-__pycache__/
-.env
-db.sqlite3
-*.log
-*.pot
-*.pyc
-staticfiles_build_vercel/
